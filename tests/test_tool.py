@@ -1,0 +1,61 @@
+import pytest
+from pydantic import BaseModel
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
+
+from modelbridge import ModelTool
+
+
+class IrisInput(BaseModel):
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+
+
+@pytest.fixture
+def iris_tool():
+    X, y = load_iris(return_X_y=True)
+    clf = LogisticRegression(max_iter=200).fit(X, y)
+    return ModelTool(
+        model=clf,
+        name="iris_classifier",
+        description="Classify iris species from measurements",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="Predicted iris species (0=setosa, 1=versicolor, 2=virginica)",
+    )
+
+
+def test_invoke_returns_dict(iris_tool):
+    result = iris_tool.invoke(
+        {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}
+    )
+    assert "species" in result
+    assert result["species"] in [0, 1, 2]
+
+
+def test_invoke_string_inputs_coerced(iris_tool):
+    result = iris_tool.invoke(
+        {"sepal_length": "5.1", "sepal_width": "3.5", "petal_length": "1.4", "petal_width": "0.2"}
+    )
+    assert result["species"] in [0, 1, 2]
+
+
+def test_invoke_invalid_input_raises(iris_tool):
+    with pytest.raises(ValueError):
+        iris_tool.invoke({"sepal_length": "not_a_number"})
+
+
+def test_to_callable(iris_tool):
+    fn = iris_tool.to_callable()
+    assert callable(fn)
+    result = fn(sepal_length=5.1, sepal_width=3.5, petal_length=1.4, petal_width=0.2)
+    assert "species" in result
+
+
+def test_output_is_native_python_type(iris_tool):
+    result = iris_tool.invoke(
+        {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}
+    )
+    assert isinstance(result["species"], int)
