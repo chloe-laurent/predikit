@@ -2,7 +2,11 @@
 [![PyPI version](https://img.shields.io/pypi/v/predikit.svg)](https://pypi.org/project/predikit/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Downloads](https://img.shields.io/pypi/dd/predikit?style=for-the-badge&color=blue)]
+
+### 📈 Project Traffic
+Detailed breakdown of downloads by version, region, and platform:
+
+[![Downloads](https://pepy.tech/badge/predikit?style=for-the-badge)](https://pepy.tech/project/predikit)
 
 Turn any trained scikit-learn or XGBoost model into an LLM-callable tool — auto-generated JSON schemas, typed I/O, zero boilerplate.
 
