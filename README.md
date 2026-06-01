@@ -8,7 +8,14 @@ Detailed breakdown of downloads by version, region, and platform:
 
 [![Downloads](https://pepy.tech/badge/predikit?style=for-the-badge)](https://pepy.tech/project/predikit)
 
-Turn any trained scikit-learn or XGBoost model into an LLM-callable tool — auto-generated JSON schemas, typed I/O, zero boilerplate.
+## Table of Contents
+- [Install](#install)
+- [30-second example](#30-second-example)
+- [Core API](#core-api)
+- [Cookbook](#cookbook)
+- [License](#license)
+
+## Turn any trained scikit-learn or XGBoost model into an LLM-callable tool — auto-generated JSON schemas, typed I/O, zero boilerplate.
 
 ```python
 tool = ModelTool(model=clf, name="classify_iris", ...)
