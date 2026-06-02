@@ -1,4 +1,5 @@
 import asyncio
+
 import pytest
 from pydantic import BaseModel
 from sklearn.datasets import load_iris
@@ -22,8 +23,11 @@ def clf_tools():
     return [
         ModelTool(
             model=LogisticRegression(max_iter=200, C=c).fit(X, y),
-            name=f"clf_C{c}", description="Classify iris",
-            input_schema=IrisInput, output_name="species", output_description="species",
+            name=f"clf_C{c}",
+            description="Classify iris",
+            input_schema=IrisInput,
+            output_name="species",
+            output_description="species",
         )
         for c in [0.5, 1.0]
     ]
@@ -35,8 +39,11 @@ def reg_tools():
     return [
         ModelTool(
             model=LinearRegression().fit(X, y_f),
-            name=f"reg_{i}", description="Regress iris",
-            input_schema=IrisInput, output_name="value", output_description="value",
+            name=f"reg_{i}",
+            description="Regress iris",
+            input_schema=IrisInput,
+            output_name="value",
+            output_description="value",
         )
         for i in range(2)
     ]
@@ -45,9 +52,25 @@ def reg_tools():
 def test_collect_merges_distinct_output_names():
     clf = LogisticRegression(max_iter=200).fit(X, y)
     reg = LinearRegression().fit(X, y.astype(float))
-    tool_a = ModelTool(model=clf, name="a", description="", input_schema=IrisInput, output_name="species", output_description="")
-    tool_b = ModelTool(model=reg, name="b", description="", input_schema=IrisInput, output_name="score", output_description="")
-    result = ModelEnsemble(tools=[tool_a, tool_b], name="e", description="", strategy="collect").invoke(SAMPLE)
+    tool_a = ModelTool(
+        model=clf,
+        name="a",
+        description="",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="",
+    )
+    tool_b = ModelTool(
+        model=reg,
+        name="b",
+        description="",
+        input_schema=IrisInput,
+        output_name="score",
+        output_description="",
+    )
+    result = ModelEnsemble(
+        tools=[tool_a, tool_b], name="e", description="", strategy="collect"
+    ).invoke(SAMPLE)
     assert "species" in result
     assert "score" in result
 
@@ -62,7 +85,9 @@ def test_mean_averages_numeric_output(reg_tools):
 
 
 def test_vote_returns_majority(clf_tools):
-    result = ModelEnsemble(tools=clf_tools, name="vote_e", description="", strategy="vote").invoke(SAMPLE)
+    result = ModelEnsemble(tools=clf_tools, name="vote_e", description="", strategy="vote").invoke(
+        SAMPLE
+    )
     assert result["species"] in [0, 1, 2]
 
 
@@ -77,7 +102,9 @@ def test_empty_tools_raises():
 
 
 def test_to_openai_schema(clf_tools):
-    ensemble = ModelEnsemble(tools=clf_tools, name="my_ensemble", description="test", strategy="vote")
+    ensemble = ModelEnsemble(
+        tools=clf_tools, name="my_ensemble", description="test", strategy="vote"
+    )
     schema = ensemble.to_openai()
     assert schema["type"] == "function"
     assert schema["function"]["name"] == "my_ensemble"
@@ -95,8 +122,22 @@ def test_ainvoke_returns_same_as_invoke_collect():
     X, y = load_iris(return_X_y=True)
     clf = LogisticRegression(max_iter=200).fit(X, y)
     reg = LinearRegression().fit(X, y.astype(float))
-    tool_a = ModelTool(model=clf, name="a", description="", input_schema=IrisInput, output_name="species", output_description="")
-    tool_b = ModelTool(model=reg, name="b", description="", input_schema=IrisInput, output_name="score", output_description="")
+    tool_a = ModelTool(
+        model=clf,
+        name="a",
+        description="",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="",
+    )
+    tool_b = ModelTool(
+        model=reg,
+        name="b",
+        description="",
+        input_schema=IrisInput,
+        output_name="score",
+        output_description="",
+    )
     ens = ModelEnsemble(tools=[tool_a, tool_b], name="e", description="", strategy="collect")
     assert asyncio.run(ens.ainvoke(SAMPLE)) == ens.invoke(SAMPLE)
 

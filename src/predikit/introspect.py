@@ -8,9 +8,7 @@ def introspect(model: Any) -> dict:
     meta["feature_names"] = (
         list(model.feature_names_in_) if hasattr(model, "feature_names_in_") else None
     )
-    meta["n_features"] = (
-        int(model.n_features_in_) if hasattr(model, "n_features_in_") else None
-    )
+    meta["n_features"] = int(model.n_features_in_) if hasattr(model, "n_features_in_") else None
 
     if hasattr(model, "classes_"):
         meta["task"] = "classification"

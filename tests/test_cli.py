@@ -1,16 +1,15 @@
 import json
+
 import pytest
 
 joblib = pytest.importorskip("joblib")
 click_testing = pytest.importorskip("click.testing")
 
-import numpy as np
-import pandas as pd
-from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.datasets import load_iris
+from click.testing import CliRunner  # noqa: E402
+from sklearn.datasets import load_iris  # noqa: E402
+from sklearn.linear_model import LinearRegression, LogisticRegression  # noqa: E402
 
-from click.testing import CliRunner
-from predikit.cli import cli
+from predikit.cli import cli  # noqa: E402
 
 
 @pytest.fixture
@@ -78,7 +77,9 @@ def test_inspect_emits_valid_openai_schema(runner, reg_pkl):
 
 
 def test_inspect_custom_name_and_description(runner, reg_pkl):
-    result = runner.invoke(cli, ["inspect", reg_pkl, "--name", "my_tool", "--description", "my desc"])
+    result = runner.invoke(
+        cli, ["inspect", reg_pkl, "--name", "my_tool", "--description", "my desc"]
+    )
     assert result.exit_code == 0
     json_part = result.output.split("OpenAI schema:\n", 1)[1].strip()
     schema = json.loads(json_part)

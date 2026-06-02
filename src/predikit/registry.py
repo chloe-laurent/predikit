@@ -1,6 +1,7 @@
 from __future__ import annotations
-from .tool import ModelTool
+
 from .ensemble import ModelEnsemble
+from .tool import ModelTool
 
 
 class ToolRegistry:
@@ -20,13 +21,11 @@ class ToolRegistry:
         return self._tools[name]
 
     def to_openai(self) -> list[dict]:
-        return (
-            [t.to_openai() for t in self._tools.values()]
-            + [e.to_openai() for e in self._ensembles.values()]
-        )
+        return [t.to_openai() for t in self._tools.values()] + [
+            e.to_openai() for e in self._ensembles.values()
+        ]
 
     def to_langchain(self) -> list:
-        return (
-            [t.to_langchain() for t in self._tools.values()]
-            + [e.to_langchain() for e in self._ensembles.values()]
-        )
+        return [t.to_langchain() for t in self._tools.values()] + [
+            e.to_langchain() for e in self._ensembles.values()
+        ]

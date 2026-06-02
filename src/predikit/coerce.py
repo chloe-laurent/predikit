@@ -1,6 +1,6 @@
 from typing import Any
-from pydantic import BaseModel
 
+from pydantic import BaseModel
 
 _BOOL_TRUE = {"true", "1", "yes", "on"}
 _BOOL_FALSE = {"false", "0", "no", "off"}
@@ -18,7 +18,9 @@ def coerce_value(value: Any, target_type: type) -> Any:
                 return True
             if low in _BOOL_FALSE:
                 return False
-            raise ValueError(f"Cannot interpret {value!r} as bool. Expected one of: true/false, yes/no, 1/0, on/off")
+            raise ValueError(
+                f"Cannot interpret {value!r} as bool. Expected one of: true/false, yes/no, 1/0, on/off"
+            )
         return bool(value)
 
     if target_type is int:

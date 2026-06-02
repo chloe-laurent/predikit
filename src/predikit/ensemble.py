@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 import asyncio
 from collections import Counter
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
-from .tool import ModelTool
-from .exporters.openai import to_openai_schema
 from .exporters.langchain import to_langchain_tool
+from .exporters.openai import to_openai_schema
+from .tool import ModelTool
 
 _VALID_STRATEGIES = {"collect", "mean", "weighted_mean", "vote", "weighted_vote"}
 
@@ -71,14 +73,14 @@ class ModelEnsemble:
         if self.strategy == "weighted_mean":
             numeric = [float(v) for v in values]
             total = sum(weights)
-            return {output_name: sum(w * v for w, v in zip(weights, numeric)) / total}
+            return {output_name: sum(w * v for w, v in zip(weights, numeric, strict=False)) / total}
 
         if self.strategy == "vote":
             return {output_name: Counter(values).most_common(1)[0][0]}
 
         if self.strategy == "weighted_vote":
             tally: dict[Any, float] = {}
-            for w, v in zip(weights, values):
+            for w, v in zip(weights, values, strict=False):
                 tally[v] = tally.get(v, 0.0) + w
             return {output_name: max(tally, key=tally.__getitem__)}
 
@@ -94,6 +96,7 @@ class ModelEnsemble:
     def to_callable(self) -> Callable[..., dict]:
         def _fn(**kwargs) -> dict:
             return self.invoke(kwargs)
+
         _fn.__name__ = self.name
         _fn.__doc__ = self.description
         return _fn

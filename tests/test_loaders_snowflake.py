@@ -1,4 +1,5 @@
 """Unit tests for from_snowflake: fully mocked — no Snowflake connection needed."""
+
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -7,10 +8,10 @@ from pydantic import BaseModel, Field
 
 from predikit.loaders.snowflake import _SnowflakeShim, from_snowflake
 
-
 # ---------------------------------------------------------------------------
 # Shared schema
 # ---------------------------------------------------------------------------
+
 
 class MemberInput(BaseModel):
     tenure_months: float = Field(description="Months as a member")
@@ -21,6 +22,7 @@ class MemberInput(BaseModel):
 # ---------------------------------------------------------------------------
 # _SnowflakeShim unit tests
 # ---------------------------------------------------------------------------
+
 
 class TestSnowflakeShim:
     def test_predict_calls_correct_method(self):
@@ -48,6 +50,7 @@ class TestSnowflakeShim:
 
     def test_predict_flattens_dataframe_result(self):
         import pandas as pd
+
         mock_model = MagicMock()
         mock_model.predict.return_value = pd.DataFrame({"output": [1]})
         shim = _SnowflakeShim(mock_model)
@@ -67,6 +70,7 @@ class TestSnowflakeShim:
 # ---------------------------------------------------------------------------
 # from_snowflake integration tests (mocked session)
 # ---------------------------------------------------------------------------
+
 
 def _make_mock_session_and_model(return_value):
     """Return (mock_session, mock_sf_model) wired up through a mock Registry."""
@@ -168,12 +172,15 @@ class TestFromSnowflake:
 
     def test_import_error_without_snowflake_ml(self, monkeypatch):
         import sys
+
         monkeypatch.setitem(sys.modules, "snowflake", None)
         monkeypatch.setitem(sys.modules, "snowflake.ml", None)
         monkeypatch.setitem(sys.modules, "snowflake.ml.registry", None)
 
         import importlib
+
         import predikit.loaders.snowflake as sf_mod
+
         importlib.reload(sf_mod)
 
         with pytest.raises(ImportError, match="snowflake-ml-python is required"):

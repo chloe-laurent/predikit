@@ -1,16 +1,18 @@
 from __future__ import annotations
+
 import asyncio
 import time
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 from pydantic import BaseModel
 
-from .introspect import introspect
 from .coerce import coerce_inputs, coerce_value
-from .exporters.openai import to_openai_schema
-from .exporters.langchain import to_langchain_tool
 from .exceptions import LowConfidenceError
+from .exporters.langchain import to_langchain_tool
+from .exporters.openai import to_openai_schema
+from .introspect import introspect
 
 _VALID_ON_LOW_CONFIDENCE = {"warn", "raise", "fallback"}
 _SCALAR_TYPES = (bool, int, float, str)
@@ -33,7 +35,9 @@ class ModelTool:
         verbose: bool = False,
     ) -> None:
         if on_low_confidence not in _VALID_ON_LOW_CONFIDENCE:
-            raise ValueError(f"on_low_confidence must be one of {_VALID_ON_LOW_CONFIDENCE}, got {on_low_confidence!r}")
+            raise ValueError(
+                f"on_low_confidence must be one of {_VALID_ON_LOW_CONFIDENCE}, got {on_low_confidence!r}"
+            )
         self.model = model
         self.name = name
         self.description = description
@@ -99,8 +103,10 @@ class ModelTool:
 
     def to_callable(self) -> Callable[..., dict]:
         """Return a plain Python function that calls invoke()."""
+
         def _fn(**kwargs) -> dict:
             return self.invoke(kwargs)
+
         _fn.__name__ = self.name
         _fn.__doc__ = self.description
         return _fn
@@ -135,7 +141,8 @@ class ModelTool:
         if feature_names:
             try:
                 import pandas as pd
-                return pd.DataFrame([dict(zip(feature_names, features))])
+
+                return pd.DataFrame([dict(zip(feature_names, features, strict=False))])
             except ImportError:
                 pass
         return np.array([features])

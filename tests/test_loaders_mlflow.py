@@ -1,6 +1,5 @@
 """Integration tests for from_mlflow: logs a real model, loads, invokes."""
-import os
-import tempfile
+
 import numpy as np
 import pytest
 from pydantic import BaseModel, Field
@@ -10,13 +9,13 @@ from sklearn.tree import DecisionTreeRegressor
 
 mlflow = pytest.importorskip("mlflow", reason="mlflow not installed")
 
-from predikit.loaders import from_mlflow
-from predikit.loaders.mlflow import _PyfuncShim
-
+from predikit.loaders import from_mlflow  # noqa: E402
+from predikit.loaders.mlflow import _PyfuncShim  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Shared schemas
 # ---------------------------------------------------------------------------
+
 
 class IrisInput(BaseModel):
     sepal_length: float = Field(description="Sepal length in cm")
@@ -34,8 +33,10 @@ class RegressionInput(BaseModel):
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _log_sklearn_model(model, tmp_path):
     import mlflow.sklearn
+
     mlflow.set_tracking_uri(f"sqlite:///{tmp_path}/mlflow.db")
     mlflow.set_experiment("predikit-test")
     with mlflow.start_run() as run:
@@ -48,6 +49,7 @@ def _log_sklearn_model(model, tmp_path):
 # _PyfuncShim unit tests
 # ---------------------------------------------------------------------------
 
+
 class TestPyfuncShim:
     def test_predict_returns_flat_array(self, tmp_path):
         X, y = load_iris(return_X_y=True)
@@ -55,6 +57,7 @@ class TestPyfuncShim:
         uri = _log_sklearn_model(clf, tmp_path)
 
         import mlflow.pyfunc
+
         pyfunc_model = mlflow.pyfunc.load_model(uri)
         shim = _PyfuncShim(pyfunc_model)
 
@@ -68,6 +71,7 @@ class TestPyfuncShim:
         uri = _log_sklearn_model(clf, tmp_path)
 
         import mlflow.pyfunc
+
         pyfunc_model = mlflow.pyfunc.load_model(uri)
         shim = _PyfuncShim(pyfunc_model)
 
@@ -81,6 +85,7 @@ class TestPyfuncShim:
         uri = _log_sklearn_model(clf, tmp_path)
 
         import mlflow.pyfunc
+
         pyfunc_model = mlflow.pyfunc.load_model(uri)
         shim = _PyfuncShim(pyfunc_model)
 
@@ -95,6 +100,7 @@ class TestPyfuncShim:
         uri = _log_sklearn_model(reg, tmp_path)
 
         import mlflow.pyfunc
+
         pyfunc_model = mlflow.pyfunc.load_model(uri)
         shim = _PyfuncShim(pyfunc_model)
 
@@ -104,6 +110,7 @@ class TestPyfuncShim:
 # ---------------------------------------------------------------------------
 # from_mlflow integration tests
 # ---------------------------------------------------------------------------
+
 
 class TestFromMlflow:
     def test_roundtrip_classifier(self, tmp_path):
@@ -120,12 +127,14 @@ class TestFromMlflow:
             output_description="Predicted species index",
         )
 
-        result = tool.invoke({
-            "sepal_length": 5.1,
-            "sepal_width": 3.5,
-            "petal_length": 1.4,
-            "petal_width": 0.2,
-        })
+        result = tool.invoke(
+            {
+                "sepal_length": 5.1,
+                "sepal_width": 3.5,
+                "petal_length": 1.4,
+                "petal_width": 0.2,
+            }
+        )
         assert "species" in result
         assert result["species"] in [0, 1, 2]
 
@@ -170,12 +179,15 @@ class TestFromMlflow:
 
     def test_import_error_without_mlflow(self, monkeypatch):
         import sys
+
         monkeypatch.setitem(sys.modules, "mlflow", None)
         monkeypatch.setitem(sys.modules, "mlflow.pyfunc", None)
 
         # Force re-import so the ImportError path fires.
         import importlib
+
         import predikit.loaders.mlflow as loader_mod
+
         importlib.reload(loader_mod)
 
         with pytest.raises(ImportError, match="mlflow is required"):

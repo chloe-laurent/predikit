@@ -23,9 +23,15 @@ def clf():
 
 def _make(clf, threshold, mode, fallback=None):
     return ModelTool(
-        model=clf, name="iris", description="test",
-        input_schema=IrisInput, output_name="species", output_description="species",
-        confidence_threshold=threshold, on_low_confidence=mode, fallback_tool=fallback,
+        model=clf,
+        name="iris",
+        description="test",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="species",
+        confidence_threshold=threshold,
+        on_low_confidence=mode,
+        fallback_tool=fallback,
     )
 
 
@@ -51,8 +57,12 @@ def test_raise_mode_raises_low_confidence_error(clf):
 def test_fallback_mode_invokes_fallback_tool(clf):
     fallback_clf = LogisticRegression(max_iter=200).fit(X_iris, y_iris)
     fallback = ModelTool(
-        model=fallback_clf, name="fallback", description="fallback",
-        input_schema=IrisInput, output_name="species", output_description="species",
+        model=fallback_clf,
+        name="fallback",
+        description="fallback",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="species",
     )
     result = _make(clf, threshold=2.0, mode="fallback", fallback=fallback).invoke(SAMPLE)
     assert "species" in result
@@ -72,9 +82,14 @@ def test_no_threshold_skips_confidence_check(clf):
 def test_confidence_not_applied_to_regressor():
     reg = LinearRegression().fit(X_iris, y_iris.astype(float))
     tool = ModelTool(
-        model=reg, name="reg", description="test",
-        input_schema=IrisInput, output_name="value", output_description="value",
-        confidence_threshold=2.0, on_low_confidence="raise",  # would fire for a classifier
+        model=reg,
+        name="reg",
+        description="test",
+        input_schema=IrisInput,
+        output_name="value",
+        output_description="value",
+        confidence_threshold=2.0,
+        on_low_confidence="raise",  # would fire for a classifier
     )
     result = tool.invoke(SAMPLE)  # must NOT raise
     assert "value" in result
