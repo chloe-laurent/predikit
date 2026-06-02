@@ -2,6 +2,8 @@
 [![PyPI version](https://img.shields.io/pypi/v/predikit.svg)](https://pypi.org/project/predikit/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![CI](https://github.com/Tejas-TA/predikit/actions/workflows/test.yml/badge.svg)](https://github.com/Tejas-TA/predikit/actions/workflows/test.yml)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 ### 📈 Project Traffic
 Detailed breakdown of downloads by version, region, and platform:
@@ -13,6 +15,7 @@ Detailed breakdown of downloads by version, region, and platform:
 - [30-second example](#30-second-example)
 - [Core API](#core-api)
 - [Cookbook](#cookbook)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Turn any trained scikit-learn or XGBoost model into an LLM-callable tool — auto-generated JSON schemas, typed I/O, zero boilerplate.
@@ -315,10 +318,13 @@ See [`examples/03_orlando_real_estate.py`](examples/03_orlando_real_estate.py) f
 
 Planned for later releases:
 
-- HuggingFace / PyTorch / TensorFlow support
-- Async invocation
-- Weighted ensemble strategies
-- CLI (`predikit inspect model.pkl`)
+- HuggingFace / PyTorch / TensorFlow model support
+- Streaming inference support
+- OpenAI Assistants API integration
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR guidelines. The [CHANGELOG](CHANGELOG.md) tracks notable changes per release.
 
 ## License
 
