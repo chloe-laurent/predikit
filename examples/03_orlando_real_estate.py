@@ -5,7 +5,7 @@ Trains an XGBoost model on synthetic Orlando-area housing data,
 wraps it as an LLM-callable tool, and shows the full end-to-end flow:
 schema generation → registry export → direct invocation → callable.
 
-Requires: pip install modelbridge[xgboost]
+Requires: pip install xgboost
 """
 import json
 
@@ -17,7 +17,7 @@ from sklearn.model_selection import train_test_split
 try:
     from xgboost import XGBRegressor
 except ImportError:
-    raise SystemExit("XGBoost not installed. Run: pip install modelbridge[xgboost]")
+    raise SystemExit("XGBoost not installed. Run: pip install xgboost")
 
 from predikit import ModelTool, ToolRegistry
 
