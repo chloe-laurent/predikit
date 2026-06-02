@@ -97,7 +97,7 @@ class ModelTool:
         """Return an OpenAI function-calling schema dict."""
         return to_openai_schema(self)
 
-    def to_langchain(self):
+    def to_langchain(self) -> Any:
         """Return a LangChain StructuredTool."""
         return to_langchain_tool(self)
 
@@ -142,7 +142,7 @@ class ModelTool:
             try:
                 import pandas as pd
 
-                return pd.DataFrame([dict(zip(feature_names, features, strict=False))])
+                return pd.DataFrame([dict(zip(feature_names, features, strict=True))])
             except ImportError:
                 pass
         return np.array([features])

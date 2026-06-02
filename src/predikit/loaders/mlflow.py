@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from pydantic import BaseModel
 
@@ -9,7 +11,7 @@ from ..tool import ModelTool
 class _PyfuncShim:
     """Wraps an mlflow.pyfunc model to look like an sklearn estimator."""
 
-    def __init__(self, pyfunc_model, classes=None) -> None:
+    def __init__(self, pyfunc_model: Any, classes: list | None = None) -> None:
         self._model = pyfunc_model
 
         # Surface sklearn metadata (feature names, n_features, classes) so
@@ -32,13 +34,13 @@ class _PyfuncShim:
             if hasattr(underlying, "n_features_in_"):
                 self.n_features_in_ = underlying.n_features_in_
 
-    def predict(self, X) -> np.ndarray:
+    def predict(self, X: Any) -> np.ndarray:
         result = self._model.predict(X)
         if hasattr(result, "to_numpy"):
             return result.to_numpy().flatten()
         return np.asarray(result).flatten()
 
-    def predict_proba(self, X) -> np.ndarray:
+    def predict_proba(self, X: Any) -> np.ndarray:
         impl = getattr(self._model, "_model_impl", None)
         if impl is not None:
             underlying = getattr(impl, "sklearn_model", None)

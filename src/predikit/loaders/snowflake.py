@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from pydantic import BaseModel
 
@@ -14,13 +16,15 @@ except ImportError:
 class _SnowflakeShim:
     """Wraps a Snowflake Model Registry model to look like an sklearn estimator."""
 
-    def __init__(self, sf_model, output_method: str = "predict", classes=None) -> None:
+    def __init__(
+        self, sf_model: Any, output_method: str = "predict", classes: list | None = None
+    ) -> None:
         self._model = sf_model
         self._method = output_method
         if classes is not None:
             self.classes_ = classes
 
-    def predict(self, X) -> np.ndarray:
+    def predict(self, X: Any) -> np.ndarray:
         result = getattr(self._model, self._method)(X)
         if hasattr(result, "to_numpy"):
             return result.to_numpy().flatten()
@@ -28,7 +32,7 @@ class _SnowflakeShim:
 
 
 def from_snowflake(
-    session,
+    session: Any,
     model_name: str,
     model_version: str,
     name: str,
@@ -37,7 +41,7 @@ def from_snowflake(
     output_name: str,
     output_description: str,
     output_method: str = "predict",
-    classes=None,
+    classes: list | None = None,
     **model_tool_kwargs,
 ) -> ModelTool:
     """Load a registered Snowflake model and return it as a ModelTool.

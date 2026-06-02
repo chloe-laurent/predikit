@@ -73,14 +73,14 @@ class ModelEnsemble:
         if self.strategy == "weighted_mean":
             numeric = [float(v) for v in values]
             total = sum(weights)
-            return {output_name: sum(w * v for w, v in zip(weights, numeric, strict=False)) / total}
+            return {output_name: sum(w * v for w, v in zip(weights, numeric, strict=True)) / total}
 
         if self.strategy == "vote":
             return {output_name: Counter(values).most_common(1)[0][0]}
 
         if self.strategy == "weighted_vote":
             tally: dict[Any, float] = {}
-            for w, v in zip(weights, values, strict=False):
+            for w, v in zip(weights, values, strict=True):
                 tally[v] = tally.get(v, 0.0) + w
             return {output_name: max(tally, key=tally.__getitem__)}
 
@@ -90,7 +90,7 @@ class ModelEnsemble:
     def to_openai(self) -> dict:
         return to_openai_schema(self)
 
-    def to_langchain(self):
+    def to_langchain(self) -> Any:
         return to_langchain_tool(self)
 
     def to_callable(self) -> Callable[..., dict]:
