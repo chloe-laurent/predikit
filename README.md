@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Tejas-TA/predikit/main/docs/logo.png" alt="predikit" width="500"/>
+  <picture>
+    <source srcset="https://raw.githubusercontent.com/Tejas-TA/predikit/main/docs/logo.gif">
+    <img src="https://raw.githubusercontent.com/Tejas-TA/predikit/main/docs/logo.png" alt="predikit" width="500"/>
+  </picture>
 </p>
 
 <p align="center">
@@ -15,9 +18,9 @@
 </p>
 
 <p align="center">
-  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit/week" alt="Weekly Downloads"/></a>
-  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit/month" alt="Monthly Downloads"/></a>
-  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit" alt="Total Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=week&units=international_system&left_color=grey&right_color=blue&left_text=weekly+downloads" alt="Weekly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=month&units=international_system&left_color=grey&right_color=blue&left_text=monthly+downloads" alt="Monthly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=total&units=international_system&left_color=grey&right_color=blue&left_text=total+downloads" alt="Total Downloads"/></a>
 </p>
 
 ```python
