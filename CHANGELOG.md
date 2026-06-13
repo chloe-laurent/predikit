@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-06-13
+
+### Changed
+- Redesigned PyPI/README hero: logo, centered tagline, and badges in a unified `<p align="center">` block
+- Tagline moved from a `##` heading to a proper descriptive paragraph
+- Badges converted to centered HTML `<img>` links for consistent rendering on PyPI
+- Quick code teaser repositioned directly below badges (before Table of Contents)
+- "Field naming rule" added to Table of Contents
+- `ainvoke()` added to `ModelTool` Core API reference table
+- `ModelEnsemble` Core API subsection added with constructor signature and full strategy table
+- Project Traffic / download badge moved to bottom of README
+- Development Status classifier bumped from `3 - Alpha` to `4 - Beta` in `pyproject.toml`
+- Removed CI test status badge from README
+
 ## [0.4.1] - 2026-06-02
 
 ### Added

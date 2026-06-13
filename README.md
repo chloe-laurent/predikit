@@ -1,29 +1,33 @@
-# predikit
-[![PyPI version](https://img.shields.io/pypi/v/predikit.svg)](https://pypi.org/project/predikit/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Tejas-TA/predikit/main/docs/logo.png" alt="predikit" width="500"/>
+</p>
 
-### 📈 Project Traffic
-Detailed breakdown of downloads by version, region, and platform:
+<p align="center">
+  Turn any trained scikit-learn or XGBoost model into an LLM-callable tool —<br/>
+  auto-generated JSON schemas, typed I/O, zero boilerplate.
+</p>
 
-[![Downloads](https://pepy.tech/badge/predikit?style=for-the-badge)](https://pepy.tech/project/predikit)
-
-## Table of Contents
-- [Install](#install)
-- [30-second example](#30-second-example)
-- [Core API](#core-api)
-- [Cookbook](#cookbook)
-- [Contributing](#contributing)
-- [License](#license)
-
-## Turn any trained scikit-learn or XGBoost model into an LLM-callable tool — auto-generated JSON schemas, typed I/O, zero boilerplate.
+<p align="center">
+  <a href="https://pypi.org/project/predikit/"><img src="https://img.shields.io/pypi/v/predikit.svg" alt="PyPI version"/></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+"/></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT"/></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
+</p>
 
 ```python
 tool = ModelTool(model=clf, name="classify_iris", ...)
 tool.to_openai()              # OpenAI function schema, ready to pass to the API
 tool.invoke({"sqft": 2200})   # → {"price_usd": 370730}
 ```
+
+## Table of Contents
+- [Install](#install)
+- [30-second example](#30-second-example)
+- [Core API](#core-api)
+- [Field naming rule](#field-naming-rule)
+- [Cookbook](#cookbook)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Install
 
@@ -102,6 +106,7 @@ ModelTool(
 | Method | Returns | What it does |
 |--------|---------|--------------|
 | `.invoke(input_dict)` | `dict` | Validates → predicts → returns `{output_name: value}` |
+| `.ainvoke(input_dict)` | `dict` | Async version of `.invoke()` |
 | `.to_openai()` | `dict` | OpenAI function-calling schema |
 | `.to_langchain()` | `StructuredTool` | LangChain tool |
 | `.to_callable()` | `Callable` | Plain Python function |
@@ -116,6 +121,30 @@ registry.to_openai()     # → list[dict], pass directly to OpenAI
 registry.to_langchain()  # → list[StructuredTool]
 registry.get("name")     # → ModelTool
 ```
+
+### `ModelEnsemble`
+
+Call multiple models and reconcile their outputs in one step:
+
+```python
+ModelEnsemble(
+    tools: list[ModelTool],   # models to run in parallel
+    name: str,                # ensemble tool name the LLM sees
+    description: str,
+    strategy: str,            # "collect" | "mean" | "vote" | "weighted_mean" | "weighted_vote"
+    weights: list[float],     # optional, for weighted strategies
+)
+```
+
+| Strategy | Behaviour |
+|----------|-----------|
+| `"collect"` | Merges all outputs into one dict (tools can have different `output_name`) |
+| `"mean"` | Averages numeric outputs (all tools must share `output_name`) |
+| `"vote"` | Majority class vote (all tools must share `output_name`) |
+| `"weighted_mean"` | Weighted average — provide a `weights` list |
+| `"weighted_vote"` | Weighted majority vote — provide a `weights` list |
+
+`ModelEnsemble` exposes the same `.invoke()`, `.ainvoke()`, `.to_openai()`, and `.to_langchain()` interface as `ModelTool`.
 
 ## Field naming rule
 
@@ -236,8 +265,6 @@ Only applies to classifiers that implement `predict_proba`. Regressors are unaff
 
 ### Multi-model ensemble
 
-Call multiple models and reconcile their outputs in one step:
-
 ```python
 from predikit import ModelEnsemble, ToolRegistry
 
@@ -251,12 +278,6 @@ ensemble = ModelEnsemble(
 result  = ensemble.invoke(inputs)  # → {"price_usd": 370112}
 schema  = ensemble.to_openai()     # works exactly like ModelTool
 ```
-
-| strategy | behaviour |
-|----------|-----------|
-| `"collect"` | merges all outputs into one dict (tools can have different `output_name`) |
-| `"mean"` | averages numeric outputs (all tools must share `output_name`) |
-| `"vote"` | majority class vote (all tools must share `output_name`) |
 
 Register ensembles alongside individual tools:
 
@@ -328,3 +349,11 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR
 ## License
 
 MIT © Tejas Tumakuru Ashok
+
+---
+
+### Project Traffic
+
+Detailed breakdown of downloads by version, region, and platform:
+
+[![Downloads](https://pepy.tech/badge/predikit?style=for-the-badge)](https://pepy.tech/project/predikit)
