@@ -27,7 +27,7 @@ class _SnowflakeShim:
     def predict(self, X: Any) -> np.ndarray:
         result = getattr(self._model, self._method)(X)
         if hasattr(result, "to_numpy"):
-            return result.to_numpy().flatten()
+            return np.asarray(result.to_numpy()).flatten()
         return np.asarray(result).flatten()
 
 

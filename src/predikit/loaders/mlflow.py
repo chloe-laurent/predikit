@@ -37,7 +37,7 @@ class _PyfuncShim:
     def predict(self, X: Any) -> np.ndarray:
         result = self._model.predict(X)
         if hasattr(result, "to_numpy"):
-            return result.to_numpy().flatten()
+            return np.asarray(result.to_numpy()).flatten()
         return np.asarray(result).flatten()
 
     def predict_proba(self, X: Any) -> np.ndarray:
@@ -45,7 +45,7 @@ class _PyfuncShim:
         if impl is not None:
             underlying = getattr(impl, "sklearn_model", None)
             if underlying is not None and hasattr(underlying, "predict_proba"):
-                return underlying.predict_proba(X)
+                return np.asarray(underlying.predict_proba(X))
         raise NotImplementedError(
             "predict_proba is not available for this MLflow pyfunc model. "
             "The underlying model may not expose it through the pyfunc interface."
