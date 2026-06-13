@@ -14,6 +14,12 @@
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
 </p>
 
+<p align="center">
+  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dd/predikit.svg?label=daily%20downloads&color=informational" alt="Daily Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dw/predikit.svg?label=weekly%20downloads&color=informational" alt="Weekly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dm/predikit.svg?label=monthly%20downloads&color=informational" alt="Monthly Downloads"/></a>
+</p>
+
 ```python
 tool = ModelTool(model=clf, name="classify_iris", ...)
 tool.to_openai()              # OpenAI function schema, ready to pass to the API
