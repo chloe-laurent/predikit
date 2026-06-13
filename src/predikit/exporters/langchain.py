@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ..ensemble import ModelEnsemble
     from ..tool import ModelTool
 
 
-def to_langchain_tool(tool: Union[ModelTool, ModelEnsemble]) -> Any:
+def to_langchain_tool(tool: ModelTool | ModelEnsemble) -> Any:
     """Convert a ModelTool to a LangChain StructuredTool."""
     try:
         from langchain_core.tools import StructuredTool
