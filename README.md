@@ -15,9 +15,9 @@
 </p>
 
 <p align="center">
-  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dd/predikit.svg?label=daily%20downloads&color=informational" alt="Daily Downloads"/></a>
-  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dw/predikit.svg?label=weekly%20downloads&color=informational" alt="Weekly Downloads"/></a>
-  <a href="https://pepy.tech/project/predikit"><img src="https://img.shields.io/pypi/dm/predikit.svg?label=monthly%20downloads&color=informational" alt="Monthly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit/week" alt="Weekly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit/month" alt="Monthly Downloads"/></a>
+  <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/badge/predikit" alt="Total Downloads"/></a>
 </p>
 
 ```python
@@ -356,10 +356,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR
 
 MIT © Tejas Tumakuru Ashok
 
----
-
-### Project Traffic
-
-Detailed breakdown of downloads by version, region, and platform:
-
-[![Downloads](https://pepy.tech/badge/predikit?style=for-the-badge)](https://pepy.tech/project/predikit)
