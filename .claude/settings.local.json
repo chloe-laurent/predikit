@@ -6,7 +6,9 @@
       "Bash(python -m pytest tests/ -v --tb=short --cov=src/predikit --cov-report=term-missing)",
       "WebFetch(domain:github.com)",
       "PowerShell(python -m pip install mypy -q)",
-      "PowerShell(python -m mypy src/predikit)"
+      "PowerShell(python -m mypy src/predikit)",
+      "Bash(python -m pytest --tb=short -q)",
+      "Bash(uv run *)"
     ]
   }
 }

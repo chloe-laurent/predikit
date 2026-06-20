@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 def to_openai_schema(tool: ModelTool | ModelEnsemble) -> dict:
     """Convert a ModelTool to an OpenAI function-calling schema dict."""
-    schema = tool.input_schema.model_json_schema()
+    schema = tool.input_schema.model_json_schema().copy()
     schema.pop("title", None)
 
     return {

@@ -19,6 +19,10 @@ class _SnowflakeShim:
     def __init__(
         self, sf_model: Any, output_method: str = "predict", classes: list | None = None
     ) -> None:
+        if not callable(getattr(sf_model, output_method, None)):
+            raise AttributeError(
+                f"Snowflake model object has no callable method {output_method!r}."
+            )
         self._model = sf_model
         self._method = output_method
         if classes is not None:

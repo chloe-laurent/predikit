@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+import warnings
 from collections.abc import Callable
 from typing import Any
 
@@ -38,6 +39,10 @@ class ModelTool:
             raise ValueError(
                 f"on_low_confidence must be one of {_VALID_ON_LOW_CONFIDENCE}, got {on_low_confidence!r}"
             )
+        if on_low_confidence == "fallback" and fallback_tool is None:
+            raise ValueError(
+                "on_low_confidence='fallback' requires a fallback_tool to be provided."
+            )
         self.model = model
         self.name = name
         self.description = description
@@ -46,6 +51,13 @@ class ModelTool:
         self.output_description = output_description
         self._meta = introspect(model)
         self.confidence_threshold = confidence_threshold
+        if confidence_threshold is not None and self._meta.get("task") != "classification":
+            warnings.warn(
+                f"confidence_threshold is set on '{name}' but the model is a regressor; "
+                "the threshold will have no effect.",
+                UserWarning,
+                stacklevel=2,
+            )
         self.on_low_confidence = on_low_confidence
         self.fallback_tool = fallback_tool
         self.verbose = verbose
