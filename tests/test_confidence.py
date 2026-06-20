@@ -69,9 +69,9 @@ def test_fallback_mode_invokes_fallback_tool(clf):
     assert "_low_confidence" not in result
 
 
-def test_fallback_without_fallback_tool_degrades_to_warn(clf):
-    result = _make(clf, threshold=2.0, mode="fallback", fallback=None).invoke(SAMPLE)
-    assert result["_low_confidence"] is True
+def test_fallback_without_fallback_tool_raises_at_init(clf):
+    with pytest.raises(ValueError, match="fallback_tool"):
+        _make(clf, threshold=2.0, mode="fallback", fallback=None)
 
 
 def test_no_threshold_skips_confidence_check(clf):
