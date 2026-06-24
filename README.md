@@ -6,7 +6,8 @@
 </p>
 
 <p align="center">
-  Turn any trained scikit-learn or XGBoost model into an LLM-callable tool —<br/>
+  <strong>The bridge between your ML models and LLM agents.</strong><br/>
+  Wrap any trained scikit-learn or XGBoost model as an LLM-callable tool —<br/>
   auto-generated JSON schemas, typed I/O, zero boilerplate.
 </p>
 
@@ -18,6 +19,8 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/Tejas-TA/predikit/stargazers"><img src="https://img.shields.io/github/stars/Tejas-TA/predikit?style=social" alt="GitHub Stars"/></a>
+  <a href="https://github.com/Tejas-TA/predikit/network/members"><img src="https://img.shields.io/github/forks/Tejas-TA/predikit?style=social" alt="GitHub Forks"/></a>
   <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=week&units=international_system&left_color=grey&right_color=blue&left_text=weekly+downloads" alt="Weekly Downloads"/></a>
   <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=month&units=international_system&left_color=grey&right_color=blue&left_text=monthly+downloads" alt="Monthly Downloads"/></a>
   <a href="https://pepy.tech/project/predikit"><img src="https://static.pepy.tech/personalized-badge/predikit?period=total&units=international_system&left_color=grey&right_color=blue&left_text=total+downloads" alt="Total Downloads"/></a>
@@ -29,34 +32,71 @@ tool.to_openai()              # OpenAI function schema, ready to pass to the API
 tool.invoke({"sqft": 2200})   # → {"price_usd": 370730}
 ```
 
+---
+
 ## Table of Contents
+- [Why predikit?](#why-predikit)
+- [Works with](#works-with)
 - [Install](#install)
-- [30-second example](#30-second-example)
+- [Quick start](#quick-start)
 - [Core API](#core-api)
 - [Field naming rule](#field-naming-rule)
 - [Cookbook](#cookbook)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
+
+---
+
+## Why predikit?
+
+Most ML pipelines stop at `.predict()`. Getting that prediction callable by an LLM agent — with validated inputs, correct types, and a schema the model can reason about — requires glue code that's tedious to write and easy to get wrong.
+
+predikit handles that layer for you:
+
+|  | Without predikit | With predikit |
+|--|------------------|---------------|
+| **Schema** | Hand-write JSON Schema for every model | Auto-generated from your Pydantic `BaseModel` |
+| **Type safety** | Manual casting, silent failures | Pydantic v2 validation with clear error messages |
+| **LLM integration** | OpenAI / LangChain boilerplate per model | `.to_openai()` / `.to_langchain()` in one line |
+| **Ensemble routing** | Custom aggregation logic per project | `ModelEnsemble` with 5 built-in strategies |
+| **Confidence handling** | Write your own threshold checks | `confidence_threshold` + `on_low_confidence` |
+| **Model registries** | Manual MLflow / Snowflake registry calls | `from_mlflow()` / `from_snowflake()` loaders |
+| **Async** | `asyncio.get_event_loop().run_in_executor(...)` | `await tool.ainvoke(inputs)` |
+
+---
+
+## Works with
+
+predikit is designed to plug into the tools your team already uses:
+
+**Models** — scikit-learn · XGBoost
+
+**LLM frameworks** — OpenAI function calling · LangChain · any tool-calling API that accepts JSON Schema
+
+**Model registries** — MLflow Model Registry · Snowflake Model Registry
+
+**Validation** — Pydantic v2
+
+**Async** — `asyncio`-compatible via `ainvoke()`
+
+---
 
 ## Install
 
 ```bash
 pip install predikit
 
-# With XGBoost support
-pip install predikit[xgboost]
-
-# With LangChain support
-pip install predikit[langchain]
-
-# With MLflow Model Registry support
-pip install predikit[mlflow]
-
-# With Snowflake Model Registry support
-pip install predikit[snowflake]
+# Optional extras
+pip install predikit[xgboost]    # XGBoost support
+pip install predikit[langchain]  # LangChain StructuredTool export
+pip install predikit[mlflow]     # MLflow Model Registry loader
+pip install predikit[snowflake]  # Snowflake Model Registry loader
 ```
 
-## 30-second example
+---
+
+## Quick start
 
 ```python
 from pydantic import BaseModel, Field
@@ -96,6 +136,8 @@ tool.invoke({
 })
 # → {"species": 0}
 ```
+
+---
 
 ## Core API
 
@@ -155,6 +197,8 @@ ModelEnsemble(
 
 `ModelEnsemble` exposes the same `.invoke()`, `.ainvoke()`, `.to_openai()`, and `.to_langchain()` interface as `ModelTool`.
 
+---
+
 ## Field naming rule
 
 **Your Pydantic schema field names must exactly match the column names the model was trained on.**
@@ -183,6 +227,8 @@ Schema has: ['square_footage', 'beds', 'bathrooms'], model expects: ['sqft', 'be
 ```
 
 > **Tip:** If you trained with a numpy array (no DataFrame), predikit has no feature names to check — it uses your schema's field definition order instead.
+
+---
 
 ## Cookbook
 
@@ -339,23 +385,41 @@ tool = from_snowflake(
 
 Pass `output_method="predict_proba"` or any other method your Snowflake model exposes. The returned `ModelTool` is identical to one built directly — all exporters, confidence routing, and ensemble strategies work as-is. Requires `pip install predikit[snowflake]`.
 
-### Orlando real estate demo
+### End-to-end demo
 
-See [`examples/03_orlando_real_estate.py`](examples/03_orlando_real_estate.py) for a full end-to-end walkthrough: synthetic dataset → XGBoost training → `ModelTool` → registry → OpenAI schema → prediction.
+See [`examples/03_orlando_real_estate.py`](examples/03_orlando_real_estate.py) for a full walkthrough: synthetic dataset → XGBoost training → `ModelTool` → registry → OpenAI schema → prediction.
+
+---
 
 ## Roadmap
 
-Planned for later releases:
+### Shipped
 
-- HuggingFace / PyTorch / TensorFlow model support
-- Streaming inference support
-- OpenAI Assistants API integration
+- [x] OpenAI function-calling schema export
+- [x] LangChain `StructuredTool` export
+- [x] Pydantic v2 typed I/O validation
+- [x] Multi-model `ModelEnsemble` — collect / mean / vote / weighted variants
+- [x] Confidence routing — `warn` / `raise` / `fallback`
+- [x] Async `ainvoke()` via thread pool executor
+- [x] MLflow Model Registry loader
+- [x] Snowflake Model Registry loader
+- [x] `predikit inspect` CLI
+
+### Planned
+
+- [ ] HuggingFace / PyTorch / TensorFlow model support
+- [ ] Streaming inference support
+- [ ] OpenAI Assistants API integration
+- [ ] MCP server mode
+
+---
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, code style, and PR guidelines. The [CHANGELOG](CHANGELOG.md) tracks notable changes per release.
 
+Issues and PRs are welcome — if you're wrapping a model type or registry that predikit doesn't support yet, open a discussion.
+
 ## License
 
 MIT © Tejas Tumakuru Ashok
-

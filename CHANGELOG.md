@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-06-24
+
+### Changed
+- README overhauled: added "Why predikit?" comparison table, "Works with" ecosystem section, GitHub star/fork badges, and a shipped-vs-planned roadmap
+- Quick start section replaces "30-second example" heading; `---` dividers added between major sections for better scanability
+- PyPI package description updated to a more descriptive one-liner
+- Keywords expanded: added `scikit-learn`, `tool-use`, `openai`, `langchain`, `mlops`, `ai-agents`, `pydantic`, `model-serving`
+- Added `Documentation` URL to `[project.urls]` in `pyproject.toml`
+- Added `Topic :: Software Development :: Libraries :: Python Modules` and `Typing :: Typed` classifiers
+
 ## [0.4.2] - 2026-06-13
 
 ### Changed

@@ -8,7 +8,8 @@
       "PowerShell(python -m pip install mypy -q)",
       "PowerShell(python -m mypy src/predikit)",
       "Bash(python -m pytest --tb=short -q)",
-      "Bash(uv run *)"
+      "Bash(uv run *)",
+      "PowerShell(C:\\\\AI\\\\predikit\\\\.venv\\\\Scripts\\\\python.exe -m ensurepip --upgrade)"
     ]
   }
 }
