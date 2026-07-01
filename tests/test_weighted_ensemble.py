@@ -149,6 +149,28 @@ def test_weights_wrong_length_raises(reg_tools):
         )
 
 
+def test_negative_weight_raises(reg_tools):
+    with pytest.raises(ValueError, match="non-negative"):
+        ModelEnsemble(
+            tools=reg_tools,
+            name="e",
+            description="",
+            strategy="weighted_mean",
+            weights=[1.0, -0.5],
+        )
+
+
+def test_zero_total_weight_raises(reg_tools):
+    with pytest.raises(ValueError, match="positive"):
+        ModelEnsemble(
+            tools=reg_tools,
+            name="e",
+            description="",
+            strategy="weighted_mean",
+            weights=[0.0, 0.0],
+        )
+
+
 def test_invalid_strategy_raises_at_init(reg_tools):
     with pytest.raises(ValueError, match="Unknown strategy"):
         ModelEnsemble(tools=reg_tools, name="e", description="", strategy="bad")

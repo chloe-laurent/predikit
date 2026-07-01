@@ -8,6 +8,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeRegressor
 
 mlflow = pytest.importorskip("mlflow", reason="mlflow not installed")
+pytestmark = pytest.mark.integration
 
 from predikit.loaders import from_mlflow  # noqa: E402
 from predikit.loaders.mlflow import _PyfuncShim  # noqa: E402

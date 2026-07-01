@@ -35,6 +35,10 @@ class ModelTool:
         fallback_tool: ModelTool | None = None,
         verbose: bool = False,
     ) -> None:
+        if confidence_threshold is not None and not 0.0 <= confidence_threshold <= 1.0:
+            raise ValueError(
+                f"confidence_threshold must be between 0.0 and 1.0, got {confidence_threshold!r}"
+            )
         if on_low_confidence not in _VALID_ON_LOW_CONFIDENCE:
             raise ValueError(
                 f"on_low_confidence must be one of {_VALID_ON_LOW_CONFIDENCE}, got {on_low_confidence!r}"

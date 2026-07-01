@@ -75,6 +75,11 @@ def test_collect_merges_distinct_output_names():
     assert "score" in result
 
 
+def test_collect_duplicate_output_names_raises(clf_tools):
+    with pytest.raises(ValueError, match="unique output_name"):
+        ModelEnsemble(tools=clf_tools, name="e", description="", strategy="collect")
+
+
 def test_mean_averages_numeric_output(reg_tools):
     ensemble = ModelEnsemble(tools=reg_tools, name="mean_e", description="", strategy="mean")
     result = ensemble.invoke(SAMPLE)
@@ -94,6 +99,29 @@ def test_vote_returns_majority(clf_tools):
 def test_invalid_strategy_raises(clf_tools):
     with pytest.raises(ValueError, match="Unknown strategy"):
         ModelEnsemble(tools=clf_tools, name="e", description="", strategy="bad").invoke(SAMPLE)
+
+
+def test_aggregate_strategy_mismatched_output_names_raises():
+    clf = LogisticRegression(max_iter=200).fit(X, y)
+    reg = LinearRegression().fit(X, y.astype(float))
+    tool_a = ModelTool(
+        model=clf,
+        name="a",
+        description="",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="",
+    )
+    tool_b = ModelTool(
+        model=reg,
+        name="b",
+        description="",
+        input_schema=IrisInput,
+        output_name="score",
+        output_description="",
+    )
+    with pytest.raises(ValueError, match="same output_name"):
+        ModelEnsemble(tools=[tool_a, tool_b], name="e", description="", strategy="mean")
 
 
 def test_empty_tools_raises():

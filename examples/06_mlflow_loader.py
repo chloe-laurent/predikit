@@ -11,17 +11,16 @@ Run:
     pip install predikit[mlflow]
     python examples/06_mlflow_loader.py
 """
+
 import json
 import tempfile
 
 import mlflow
 import mlflow.sklearn
-import numpy as np
 from pydantic import BaseModel, Field
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
 
-from predikit import LowConfidenceError
 from predikit.loaders import from_mlflow
 
 # ---------------------------------------------------------------------------
@@ -48,9 +47,9 @@ print(f"Logged model → {model_uri}\n")
 # ---------------------------------------------------------------------------
 class IrisInput(BaseModel):
     sepal_length: float = Field(description="Sepal length in cm")
-    sepal_width:  float = Field(description="Sepal width in cm")
+    sepal_width: float = Field(description="Sepal width in cm")
     petal_length: float = Field(description="Petal length in cm")
-    petal_width:  float = Field(description="Petal width in cm")
+    petal_width: float = Field(description="Petal width in cm")
 
 
 # ---------------------------------------------------------------------------

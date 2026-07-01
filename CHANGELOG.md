@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-07-01
+
+### Fixed
+- Added validation for `confidence_threshold` so values outside `0.0` to `1.0` fail at construction time
+- Added `ModelEnsemble` validation for duplicate `collect` outputs, mismatched aggregate output names, negative weights, and zero-total weighted strategies
+- Added `ToolRegistry` duplicate-name validation across tools and ensembles
+- Updated `ToolRegistry.get()` to retrieve both tools and ensembles with clearer missing-name errors
+- Cleaned up example lint issues and corrected stale `modelbridge[xgboost]` install text
+
+### Changed
+- Marked MLflow loader tests as opt-in integration tests so the default pytest suite stays fast and deterministic
+
 ## [0.4.4] - 2026-06-24
 
 ### Changed

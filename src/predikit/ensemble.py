@@ -10,6 +10,7 @@ from .exporters.openai import to_openai_schema
 from .tool import ModelTool
 
 _VALID_STRATEGIES = {"collect", "mean", "weighted_mean", "vote", "weighted_vote"}
+_WEIGHTED_STRATEGIES = {"weighted_mean", "weighted_vote"}
 
 
 class ModelEnsemble:
@@ -32,6 +33,24 @@ class ModelEnsemble:
         if weights is not None and len(weights) != len(tools):
             raise ValueError(
                 f"weights length ({len(weights)}) must match number of tools ({len(tools)})."
+            )
+        if weights is not None:
+            if any(w < 0 for w in weights):
+                raise ValueError("weights must be non-negative.")
+            if strategy in _WEIGHTED_STRATEGIES and sum(weights) <= 0:
+                raise ValueError("weights must sum to a positive value.")
+        output_names = [tool.output_name for tool in tools]
+        if strategy == "collect":
+            duplicates = sorted({name for name in output_names if output_names.count(name) > 1})
+            if duplicates:
+                raise ValueError(
+                    "collect strategy requires unique output_name values; "
+                    f"duplicates: {duplicates}."
+                )
+        elif len(set(output_names)) != 1:
+            raise ValueError(
+                f"{strategy} strategy requires all tools to share the same output_name; "
+                f"got {output_names}."
             )
         self.tools = tools
         self.name = name

@@ -8,6 +8,7 @@ Demonstrates ModelEnsemble with all three strategies:
 
 Requires: pip install predikit[xgboost]
 """
+
 import json
 
 import numpy as np
@@ -19,8 +20,8 @@ from sklearn.model_selection import train_test_split
 
 try:
     from xgboost import XGBRegressor
-except ImportError:
-    raise SystemExit("XGBoost not installed. Run: pip install predikit[xgboost]")
+except ImportError as err:
+    raise SystemExit("XGBoost not installed. Run: pip install predikit[xgboost]") from err
 
 from predikit import ModelEnsemble, ModelTool, ToolRegistry
 
@@ -29,37 +30,51 @@ from predikit import ModelEnsemble, ModelTool, ToolRegistry
 # ---------------------------------------------------------------------------
 rng = np.random.default_rng(42)
 n = 1_000
-sqft           = rng.integers(800, 4_000, n).astype(float)
-bedrooms       = rng.integers(1, 6, n).astype(float)
-bathrooms      = rng.choice([1.0, 1.5, 2.0, 2.5, 3.0], n)
-year_built     = rng.integers(1960, 2024, n).astype(float)
-has_pool       = rng.integers(0, 2, n).astype(float)
+sqft = rng.integers(800, 4_000, n).astype(float)
+bedrooms = rng.integers(1, 6, n).astype(float)
+bathrooms = rng.choice([1.0, 1.5, 2.0, 2.5, 3.0], n)
+year_built = rng.integers(1960, 2024, n).astype(float)
+has_pool = rng.integers(0, 2, n).astype(float)
 zip_code_group = rng.integers(0, 5, n).astype(float)
 price = (
-    80 * sqft + 15_000 * bedrooms + 10_000 * bathrooms
-    + 500 * (year_built - 1960) + 20_000 * has_pool
-    + 30_000 * zip_code_group + rng.normal(0, 15_000, n)
+    80 * sqft
+    + 15_000 * bedrooms
+    + 10_000 * bathrooms
+    + 500 * (year_built - 1960)
+    + 20_000 * has_pool
+    + 30_000 * zip_code_group
+    + rng.normal(0, 15_000, n)
 ).clip(50_000, 1_500_000)
 
-df = pd.DataFrame({
-    "sqft": sqft, "bedrooms": bedrooms, "bathrooms": bathrooms,
-    "year_built": year_built, "has_pool": has_pool, "zip_code_group": zip_code_group,
-})
+df = pd.DataFrame(
+    {
+        "sqft": sqft,
+        "bedrooms": bedrooms,
+        "bathrooms": bathrooms,
+        "year_built": year_built,
+        "has_pool": has_pool,
+        "zip_code_group": zip_code_group,
+    }
+)
 X_train, X_test, y_train, _ = train_test_split(df, price, test_size=0.2, random_state=42)
 
 
 class HouseInput(BaseModel):
-    sqft:           float = Field(description="Square footage")
-    bedrooms:       float = Field(description="Number of bedrooms")
-    bathrooms:      float = Field(description="Number of bathrooms")
-    year_built:     float = Field(description="Year built")
-    has_pool:       float = Field(description="1 if has pool, else 0")
+    sqft: float = Field(description="Square footage")
+    bedrooms: float = Field(description="Number of bedrooms")
+    bathrooms: float = Field(description="Number of bathrooms")
+    year_built: float = Field(description="Year built")
+    has_pool: float = Field(description="1 if has pool, else 0")
     zip_code_group: float = Field(description="Area cluster 0–4")
 
 
 sample = {
-    "sqft": 2200.0, "bedrooms": 3.0, "bathrooms": 2.0,
-    "year_built": 2005.0, "has_pool": 1.0, "zip_code_group": 3.0,
+    "sqft": 2200.0,
+    "bedrooms": 3.0,
+    "bathrooms": 2.0,
+    "year_built": 2005.0,
+    "has_pool": 1.0,
+    "zip_code_group": 3.0,
 }
 
 # ---------------------------------------------------------------------------
@@ -67,13 +82,19 @@ sample = {
 # ---------------------------------------------------------------------------
 xgb_tool = ModelTool(
     model=XGBRegressor(n_estimators=100, random_state=42).fit(X_train, y_train),
-    name="xgb_price", description="XGBoost price estimate",
-    input_schema=HouseInput, output_name="xgb_price_usd", output_description="XGBoost price",
+    name="xgb_price",
+    description="XGBoost price estimate",
+    input_schema=HouseInput,
+    output_name="xgb_price_usd",
+    output_description="XGBoost price",
 )
 lr_tool = ModelTool(
     model=LinearRegression().fit(X_train, y_train),
-    name="lr_price", description="Linear regression price estimate",
-    input_schema=HouseInput, output_name="lr_price_usd", output_description="LR price",
+    name="lr_price",
+    description="Linear regression price estimate",
+    input_schema=HouseInput,
+    output_name="lr_price_usd",
+    output_description="LR price",
 )
 
 collect_ensemble = ModelEnsemble(
@@ -95,8 +116,11 @@ print(f"  Linear:   ${result['lr_price_usd']:,.0f}")
 mean_tools = [
     ModelTool(
         model=XGBRegressor(n_estimators=100, random_state=seed).fit(X_train, y_train),
-        name=f"xgb_{seed}", description=f"XGBoost seed={seed}",
-        input_schema=HouseInput, output_name="price_usd", output_description="price",
+        name=f"xgb_{seed}",
+        description=f"XGBoost seed={seed}",
+        input_schema=HouseInput,
+        output_name="price_usd",
+        output_description="price",
     )
     for seed in [0, 1]
 ]
@@ -120,16 +144,19 @@ X_iris, y_iris = load_iris(return_X_y=True)
 
 class IrisInput(BaseModel):
     sepal_length: float
-    sepal_width:  float
+    sepal_width: float
     petal_length: float
-    petal_width:  float
+    petal_width: float
 
 
 clf_tools = [
     ModelTool(
         model=LogisticRegression(max_iter=200, C=c).fit(X_iris, y_iris),
-        name=f"clf_C{c}", description=f"LR C={c}",
-        input_schema=IrisInput, output_name="species", output_description="species",
+        name=f"clf_C{c}",
+        description=f"LR C={c}",
+        input_schema=IrisInput,
+        output_name="species",
+        output_description="species",
     )
     for c in [0.1, 1.0, 10.0]
 ]

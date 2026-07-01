@@ -1,4 +1,5 @@
 """Example 01 — Basic sklearn classifier wrapped as an OpenAI tool."""
+
 import json
 
 from pydantic import BaseModel, Field
@@ -36,7 +37,9 @@ print(json.dumps(tool.to_openai(), indent=2))
 
 # 5. Direct invocation
 print("\n=== Direct Invocation ===")
-result = tool.invoke({"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2})
+result = tool.invoke(
+    {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}
+)
 print(f"Result: {result}")
 
 # 6. Plain callable

@@ -9,6 +9,7 @@ Demonstrates the three on_low_confidence modes:
 threshold=0.999 guarantees the low-confidence path fires for illustration.
 In production, set this between 0.75 and 0.95.
 """
+
 from pydantic import BaseModel, Field
 from sklearn.datasets import load_iris
 from sklearn.linear_model import LogisticRegression
@@ -26,9 +27,9 @@ fallback_clf = GaussianNB().fit(X, y)
 
 class IrisInput(BaseModel):
     sepal_length: float = Field(description="Sepal length in cm")
-    sepal_width:  float = Field(description="Sepal width in cm")
+    sepal_width: float = Field(description="Sepal width in cm")
     petal_length: float = Field(description="Petal length in cm")
-    petal_width:  float = Field(description="Petal width in cm")
+    petal_width: float = Field(description="Petal width in cm")
 
 
 fallback_tool = ModelTool(
@@ -61,7 +62,9 @@ print("=== Mode: warn ===")
 result = warn_tool.invoke(sample)
 print(result)
 if result.get("_low_confidence"):
-    print(f"  → confidence {result['_confidence']:.3f} below threshold; agent should seek clarification")
+    print(
+        f"  → confidence {result['_confidence']:.3f} below threshold; agent should seek clarification"
+    )
 
 # ---------------------------------------------------------------------------
 # Mode 2: raise — lets the calling agent handle uncertainty explicitly

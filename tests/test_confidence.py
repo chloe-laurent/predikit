@@ -42,8 +42,8 @@ def test_above_threshold_returns_clean_result(clf):
 
 
 def test_warn_mode_returns_flags(clf):
-    # threshold=2.0 is impossible to exceed (probabilities ≤ 1.0), so always fires
-    result = _make(clf, threshold=2.0, mode="warn").invoke(SAMPLE)
+    # threshold=1.0 is impossible to exceed for real probabilities, so always fires
+    result = _make(clf, threshold=1.0, mode="warn").invoke(SAMPLE)
     assert result["_low_confidence"] is True
     assert 0.0 <= result["_confidence"] <= 1.0
     assert "species" in result
@@ -51,7 +51,7 @@ def test_warn_mode_returns_flags(clf):
 
 def test_raise_mode_raises_low_confidence_error(clf):
     with pytest.raises(LowConfidenceError, match="below threshold"):
-        _make(clf, threshold=2.0, mode="raise").invoke(SAMPLE)
+        _make(clf, threshold=1.0, mode="raise").invoke(SAMPLE)
 
 
 def test_fallback_mode_invokes_fallback_tool(clf):
@@ -64,14 +64,14 @@ def test_fallback_mode_invokes_fallback_tool(clf):
         output_name="species",
         output_description="species",
     )
-    result = _make(clf, threshold=2.0, mode="fallback", fallback=fallback).invoke(SAMPLE)
+    result = _make(clf, threshold=1.0, mode="fallback", fallback=fallback).invoke(SAMPLE)
     assert "species" in result
     assert "_low_confidence" not in result
 
 
 def test_fallback_without_fallback_tool_raises_at_init(clf):
     with pytest.raises(ValueError, match="fallback_tool"):
-        _make(clf, threshold=2.0, mode="fallback", fallback=None)
+        _make(clf, threshold=1.0, mode="fallback", fallback=None)
 
 
 def test_no_threshold_skips_confidence_check(clf):
@@ -88,7 +88,7 @@ def test_confidence_not_applied_to_regressor():
         input_schema=IrisInput,
         output_name="value",
         output_description="value",
-        confidence_threshold=2.0,
+        confidence_threshold=1.0,
         on_low_confidence="raise",  # would fire for a classifier
     )
     result = tool.invoke(SAMPLE)  # must NOT raise
@@ -98,3 +98,8 @@ def test_confidence_not_applied_to_regressor():
 def test_invalid_on_low_confidence_raises_at_construction(clf):
     with pytest.raises(ValueError, match="on_low_confidence"):
         _make(clf, threshold=0.9, mode="explode")
+
+
+def test_invalid_confidence_threshold_raises_at_construction(clf):
+    with pytest.raises(ValueError, match="confidence_threshold"):
+        _make(clf, threshold=1.1, mode="warn")

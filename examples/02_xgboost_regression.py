@@ -1,7 +1,8 @@
 """
 Example 02 — XGBoost regression model wrapped as a tool.
-Requires: pip install modelbridge[xgboost]
+Requires: pip install predikit[xgboost]
 """
+
 import json
 
 from pydantic import BaseModel, Field
@@ -10,8 +11,8 @@ from sklearn.model_selection import train_test_split
 
 try:
     from xgboost import XGBRegressor
-except ImportError:
-    raise SystemExit("XGBoost not installed. Run: pip install modelbridge[xgboost]")
+except ImportError as err:
+    raise SystemExit("XGBoost not installed. Run: pip install predikit[xgboost]") from err
 
 from predikit import ModelTool
 
@@ -44,11 +45,13 @@ print("=== OpenAI Tool Schema ===")
 print(json.dumps(tool.to_openai(), indent=2))
 
 print("\n=== Invoke ===")
-result = tool.invoke({
-    "feature_1": float(X_test[0, 0]),
-    "feature_2": float(X_test[0, 1]),
-    "feature_3": float(X_test[0, 2]),
-    "feature_4": float(X_test[0, 3]),
-})
+result = tool.invoke(
+    {
+        "feature_1": float(X_test[0, 0]),
+        "feature_2": float(X_test[0, 1]),
+        "feature_3": float(X_test[0, 2]),
+        "feature_4": float(X_test[0, 3]),
+    }
+)
 print(f"Prediction: {result}")
 print(f"Actual:     {y_test[0]:.2f}")

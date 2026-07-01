@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "predikit"
-version = "0.4.4"
+version = "0.4.5"
 description = "Wrap any trained sklearn/XGBoost model as an LLM-callable tool — auto-generated JSON schemas, Pydantic I/O, OpenAI & LangChain ready, zero boilerplate."
 readme = "README.md"
 license = {text = "MIT"}
@@ -72,6 +72,10 @@ packages = ["src/predikit"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = ["-m", "not integration"]
+markers = [
+    "integration: tests that exercise slower external runtimes or registries",
+]
 
 [tool.ruff]
 line-length = 100

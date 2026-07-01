@@ -15,13 +15,14 @@ For a real Snowflake connection:
     #   from snowflake.snowpark import Session
     #   session = Session.builder.configs({...}).create()
 """
+
 import json
 from unittest.mock import MagicMock
 
 import numpy as np
 from pydantic import BaseModel, Field
 
-from predikit.loaders.snowflake import _SnowflakeShim, from_snowflake
+from predikit.loaders.snowflake import from_snowflake
 
 # ---------------------------------------------------------------------------
 # Mock a Snowflake session and model (stand-in for real Snowpark objects)
@@ -36,6 +37,7 @@ mock_sf_model.predict.return_value = np.array([0.73])
 def _patch_registry(mock_sf_model):
     """Context manager that replaces Registry with a stub returning mock_sf_model."""
     from unittest.mock import patch
+
     registry_mock = MagicMock()
     registry_mock.get_model.return_value.version.return_value = mock_sf_model
     return patch("predikit.loaders.snowflake.Registry", return_value=registry_mock)
@@ -45,9 +47,9 @@ def _patch_registry(mock_sf_model):
 # Define the input schema matching the Snowflake model's feature columns
 # ---------------------------------------------------------------------------
 class MemberInput(BaseModel):
-    tenure_months:  float = Field(description="Months as a Vacation Ownership member")
+    tenure_months: float = Field(description="Months as a Vacation Ownership member")
     trips_last_year: float = Field(description="Number of trips taken in the past 12 months")
-    avg_spend:      float = Field(description="Average spend per trip in USD")
+    avg_spend: float = Field(description="Average spend per trip in USD")
 
 
 # ---------------------------------------------------------------------------
