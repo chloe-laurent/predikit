@@ -4,7 +4,8 @@ import asyncio
 import time
 import warnings
 from collections.abc import Callable
-from typing import Any
+from types import UnionType
+from typing import Any, Union, get_args, get_origin
 
 import numpy as np
 from pydantic import BaseModel
@@ -17,6 +18,7 @@ from .introspect import introspect
 
 _VALID_ON_LOW_CONFIDENCE = {"warn", "raise", "fallback"}
 _SCALAR_TYPES = (bool, int, float, str)
+_NONE_TYPE = type(None)
 
 
 class ModelTool:
@@ -143,9 +145,10 @@ class ModelTool:
         for k, v in input_dict.items():
             field = fields.get(k)
             annotation = getattr(field, "annotation", None) if field else None
-            if annotation in _SCALAR_TYPES:
+            scalar_type = _scalar_type(annotation)
+            if scalar_type is not None and v is not None:
                 try:
-                    result[k] = coerce_value(v, annotation)
+                    result[k] = coerce_value(v, scalar_type)
                 except (ValueError, TypeError):
                     result[k] = v
             else:
@@ -162,3 +165,15 @@ class ModelTool:
             except ImportError:
                 pass
         return np.array([features])
+
+
+def _scalar_type(annotation: Any) -> type | None:
+    if annotation in _SCALAR_TYPES:
+        return annotation
+
+    if get_origin(annotation) in (Union, UnionType):
+        args = [arg for arg in get_args(annotation) if arg is not _NONE_TYPE]
+        if len(args) == 1:
+            return _scalar_type(args[0])
+
+    return None

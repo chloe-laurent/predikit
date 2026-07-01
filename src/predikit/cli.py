@@ -16,7 +16,7 @@ if _CLICK_AVAILABLE:
 
     @click.group()
     def cli() -> None:
-        """predikit — ML model utilities for LLM agents."""
+        """predikit: ML model utilities for LLM agents."""
 
     @cli.command()
     @click.argument("model_path", type=click.Path(exists=True))
@@ -53,7 +53,7 @@ if _CLICK_AVAILABLE:
             for fname in meta["feature_names"]:
                 click.echo(f"  {fname}")
         else:
-            click.echo("Feature names: (none — fit the model with a named DataFrame to enable)")
+            click.echo("Feature names: (none - fit the model with a named DataFrame to enable)")
 
         if meta["classes"] is not None:
             click.echo(f"Classes:  {meta['classes']}")

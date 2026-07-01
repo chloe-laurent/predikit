@@ -86,6 +86,27 @@ def test_invoke_bool_string_coerced_through_invoke():
     assert tool.invoke({"value": 3.0, "active": "on"})["result"] in [0, 1]
 
 
+def test_invoke_optional_scalar_strings_coerced_through_invoke():
+    class MaybeFlagInput(BaseModel):
+        value: float | None = None
+        active: bool | None = None
+
+    X = np.array([[1.0, 0], [2.0, 1], [3.0, 0], [4.0, 1]])
+    y = np.array([0, 1, 0, 1])
+    clf = LogisticRegression().fit(X, y)
+
+    tool = ModelTool(
+        model=clf,
+        name="maybe_flag_test",
+        description="test optional scalar coercion",
+        input_schema=MaybeFlagInput,
+        output_name="result",
+        output_description="predicted class",
+    )
+
+    assert tool.invoke({"value": "3.0", "active": "yes"})["result"] in [0, 1]
+
+
 SAMPLE = {"sepal_length": 5.1, "sepal_width": 3.5, "petal_length": 1.4, "petal_width": 0.2}
 
 

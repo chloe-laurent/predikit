@@ -19,7 +19,7 @@ def runner():
 
 @pytest.fixture
 def reg_pkl(tmp_path):
-    """Regression model fitted with named features → has feature_names_in_."""
+    """Regression model fitted with named features, so it has feature_names_in_."""
     X, y = load_iris(return_X_y=True, as_frame=True)
     model = LinearRegression().fit(X, y.astype(float))
     path = tmp_path / "reg.pkl"

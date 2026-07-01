@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-07-01
+
+### Fixed
+- Improved `ModelTool` input coercion for optional scalar annotations like `float | None`, `bool | None`, `int | None`, and `str | None`
+- Added test coverage for optional scalar string inputs to keep LLM-friendly coercion consistent across modern Pydantic schemas
+
+### Changed
+- Removed generated MLflow run artifacts from source control and ignored future `mlruns/` outputs
+- Cleaned package metadata and CLI text to avoid Unicode dash rendering issues in terminals and package indexes
+
 ## [0.4.5] - 2026-07-01
 
 ### Fixed

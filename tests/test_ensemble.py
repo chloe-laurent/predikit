@@ -84,7 +84,7 @@ def test_mean_averages_numeric_output(reg_tools):
     ensemble = ModelEnsemble(tools=reg_tools, name="mean_e", description="", strategy="mean")
     result = ensemble.invoke(SAMPLE)
     assert "value" in result
-    # Two identical LinearRegression models → mean == either model's output
+    # Two identical LinearRegression models mean the average equals either model's output.
     single = reg_tools[0].invoke(SAMPLE)
     assert abs(result["value"] - single["value"]) < 1e-6
 
